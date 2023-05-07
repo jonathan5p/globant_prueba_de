@@ -1,0 +1,22 @@
+Tags:
+  ParentOrg: "Globant"
+  Department: "DataEngineering"
+  App: "TestStack"
+  Version: "1.0.0"
+Environment:
+  Name: dev
+  Account: "374334889508"
+  Region: us-east-1
+  ProjectName: globant-prueba
+Stacks:
+  GlobantPruebaStack: 
+    Lambda:
+      reserved_concurrent_executions: null # This value doesn't work in our test accounts, but it can be use in a real production case.
+      timeout: 180 #in seconds
+      memory_size: 256 #in mb
+      timewindow_hours: "6"
+      secret_name: globant-prueba-dev-AuroraDBClusterSecret
+  NetworkingStack:
+    max_azs: 2
+
+
