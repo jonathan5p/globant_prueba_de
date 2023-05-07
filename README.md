@@ -1,58 +1,36 @@
+Implemented architecture for the Globant Data Enginneer interview test.
 
-# Welcome to your CDK Python project!
+[Arquitecture Diagram](./images/GlobantArq.pdf)
 
-This is a blank project for CDK development with Python.
+# Prerequisites!
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+For CDK and permissions:
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+* CDK Version 2
 
-To manually create a virtualenv on MacOS and Linux:
+* Create a CDK deployment role (you can also use the one created by cdk when doing bootstrapping, but it is recomended to create a custom role just for CDK usage)
+# Implementation details
+Relevant details about the implementation.
 
-```
-$ python3 -m venv .venv
-```
+## App Configuration yaml 
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+The **configs.yaml** file stored in the **config_files** folder of this project defines the configuration of the app. This file is splitted into three parts; one with all the parameters related to the environment, one with all the tags required for the deployed resources, and the last one for the configuration parameters of all the stacks to be deployed. 
 
-```
-$ source .venv/bin/activate
-```
+When defining a new stack configuration, it is expected that this new config section will have the same name as the stack to which it belongs. Otherwise, the stack to stack_config assignment will not be carried out properly and the application will present errors when being synthesized or deployed.
 
-If you are a Windows platform, you would activate the virtualenv like this:
+# Basic shell commands for CDK
 
-```
-% .venv\Scripts\activate.bat
+By default CDK will use the default role created at bootstrap of the environment to synth/deploy/destroy all the stacks in the app. However, using different flags we can use a specific role to synth/deploy/destroy a given stack.
+
+```bash
+$ cdk bootstrap [-c @aws-cdk/core:newStyleStackSynthesis=true] [--cloudformation-execution-policies arn:aws:iam::aws:policy/PolicyName] aws://ACCOUNT-NUMBER/REGION
+$ cdk [--role-arn <CDK_ROLE_ARN>] synth [<STACK_NAME> or --all to synthetize all the stacks]
+$ cdk [--role-arn <CDK_ROLE_ARN>] deploy [<STACK_NAME> or --all to deploy all the stacks]
+$ cdk [--role-arn <CDK_ROLE_ARN>] destroy [<STACK_NAME> or --all to destroy all the stacks]
 ```
 
-Once the virtualenv is activated, you can install the required dependencies.
+# Stacks available
 
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+* NetworkingStack
+* RdsStack
+* GlobantPruebaStack
