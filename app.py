@@ -2,9 +2,7 @@
 import os
 import yaml
 import aws_cdk as cdk
-from globant_prueba.globant_prueba_stack import GlobantPruebaStack
-from globant_prueba.networking_stack import NetworkingStack
-from globant_prueba.rds_test_stack import RdsStack
+from globant_prueba.cicd_pipeline import GlobantAPICicdPipelineStack
 
 app = cdk.App()
 
@@ -25,43 +23,17 @@ app_prefix = (
     env_config.get("ProjectName") + "-" + env_config.get("Name") + "-"
 ).lower()
 
-
-networking_stack = NetworkingStack(
+GlobantAPICicdPipelineStack(
     app,
-    "NetworkingStack",
+    "GlobantAPICicdPipelineStack",
     env=cdk.Environment(
         account=env_config.get("Account"), region=env_config.get("Region")
     ),
-    description="Networking resources",
+    description="CICD API Pipeline",
     env_config=env_config,
-    stack_config=stack_config.get("NetworkingStack") if stack_config != None else None,
-    app_prefix=app_prefix,
+    stack_config=stack_config,
+    app_prefix=app_prefix
 )
 
-rds_stack = RdsStack(
-    app,
-    "RdsStack",
-    env=cdk.Environment(
-        account=env_config.get("Account"), region=env_config.get("Region")
-    ),
-    description="Tes MySql DB resources",
-    env_config=env_config,
-    stack_config=stack_config.get("RdsStack") if stack_config != None else None,
-    app_prefix=app_prefix,
-    networking_stack=networking_stack
-).add_dependency(networking_stack)
-
-api_stack = GlobantPruebaStack(
-    app,
-    "GlobantPruebaStack",
-    env=cdk.Environment(
-        account=env_config.get("Account"), region=env_config.get("Region")
-    ),
-    description="API resources",
-    env_config=env_config,
-    stack_config=stack_config.get("GlobantPruebaStack") if stack_config != None else None,
-    app_prefix=app_prefix,
-    networking_stack=networking_stack
-).add_dependency(networking_stack)
 
 app.synth()

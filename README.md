@@ -9,6 +9,8 @@ For CDK and permissions:
 * CDK Version 2
 
 * Create a CDK deployment role (you can also use the one created by cdk when doing bootstrapping, but it is recomended to create a custom role just for CDK usage)
+
+* Create a secret named github-token in secrets manager with the github access token for the CICD pipeline. Without this secret the pipeline can't get trigger by github events. 
 # Implementation details
 Relevant details about the implementation.
 

@@ -144,6 +144,11 @@ class GlobantPruebaStack(Stack):
             )
         )
 
+        # API CloudWatch Metrics
+        api.metric_count()
+        api.metric_latency()
+        api.metric_server_error()
+
         # API Stages
 
         dev_stage = apg.Stage(
@@ -151,6 +156,7 @@ class GlobantPruebaStack(Stack):
             self.app_prefix + "api-dev-stage",
             stage_name="dev",
             deployment=api.latest_deployment,
+            metrics_enabled=True
         )
 
         api.deployment_stage = dev_stage
