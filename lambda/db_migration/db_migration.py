@@ -15,6 +15,10 @@ def _read_csv(payload_body: str):
 
 def _send_data_to_mysql(data_df: pd.DataFrame, table: str, schema: str):
     con = wr.mysql.connect(secret_id=secret_name)
+    tables = wr.mysql.read_sql_query(sql="show tables;",con=con)
+    if table in tables.iloc[:,0].to_list():
+        with con.cursor() as cursor:
+            cursor.execute(f"DROP TABLE {table}")
     wr.mysql.to_sql(df=data_df, table=table, schema=schema, con=con)
     con.close()
     

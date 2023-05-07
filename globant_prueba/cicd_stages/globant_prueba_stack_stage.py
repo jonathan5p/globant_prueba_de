@@ -30,7 +30,7 @@ class GlobantPruebaStage(cdk.Stage):
             env=cdk.Environment(
                 account=self.env_config.get("Account"), region=self.env_config.get("Region")
             ),
-            description="Networking resources",
+            description="Networking resources to test the API",
             env_config=self.env_config,
             stack_config=self.stack_config.get("NetworkingStack") if self.stack_config != None else None,
             app_prefix=self.app_prefix,
