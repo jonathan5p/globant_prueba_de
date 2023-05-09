@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     url = _save_data_in_s3(data = df)
 
     res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
-    res["body"] = {"message" : f"Second SQL report runned succesfuly!",
-                   "presigned-url": url}
+    res["body"] = json.dumps({"message" : f"Second SQL report runned succesfuly!",
+                   "presigned-url": url})
 
     return res
