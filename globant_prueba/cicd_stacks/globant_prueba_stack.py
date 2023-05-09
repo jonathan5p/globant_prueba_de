@@ -5,6 +5,8 @@ from aws_cdk import (
     aws_lambda as lambda_,
     aws_ec2 as ec2,
     aws_secretsmanager as sm,
+    aws_kms as kms,
+    aws_s3 as s3
 )
 from constructs import Construct
 
@@ -33,6 +35,18 @@ class GlobantPruebaStack(Stack):
         # =============== Resource Configurations ===============
 
         lambda_config = self.stack_config.get("Lambda")
+
+        # =============== Storage S3 Bucket ===============
+
+        storage_bucket = s3.Bucket(
+            self,
+            "storage-bucket",
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            bucket_name=(self.app_prefix + "storage-bucket").lower(),
+            versioned=True,
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+            server_access_logs_prefix="server-access-logs/storage/",
+        )
 
         # =============== Lambda Backend ===============
 
@@ -278,6 +292,9 @@ class GlobantPruebaStack(Stack):
         )
 
         # =============== Permissions ===============
+
+        storage_bucket.grant_read_write(first_sql_fun)
+        storage_bucket.grant_read_write(second_sql_fun)
 
         db_secret = sm.Secret.from_secret_name_v2(
             self, "DBCredentialsSecret", lambda_config.get("secret_name")
