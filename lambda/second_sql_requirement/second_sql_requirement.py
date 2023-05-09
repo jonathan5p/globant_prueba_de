@@ -46,8 +46,8 @@ def _save_data_in_s3(data: pd.DataFrame):
 
     wr.s3.to_csv(
         df=data,
-        path=f"s3://{bucket_name}/second_sql_requirement_report.csv",
-        mode="overwrite",
+        index=False,
+        path=f"s3://{bucket_name}/second_sql_requirement_report.csv"
     )
 
     url = s3_client.generate_presigned_url(
@@ -63,8 +63,8 @@ def _save_data_in_s3(data: pd.DataFrame):
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
 
-    _run_query()
-    url = _save_data_in_s3()
+    df = _run_query()
+    url = _save_data_in_s3(data = df)
 
     res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
     res["body"] = {"message" : f"Second SQL report runned succesfuly!",
