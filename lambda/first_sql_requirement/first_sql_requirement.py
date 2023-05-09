@@ -1,17 +1,13 @@
 import json
 import os
-from io import StringIO
-import awswrangler as wr
 import pandas as pd
+import awswrangler as wr
+import boto3
 
 secret_name = os.environ["secret_name"]
+bucket_name  = os.environ["bucket_name"]
 
-
-def _run_query():
-    con = wr.mysql.connect(secret_id=secret_name)
-    with con.cursor() as cursor:
-        df = cursor.execute(
-            """
+sql =  """
             WITH hired_employees_cte AS ( 
                 SELECT
                     quarter(datetime) AS quart,
@@ -42,9 +38,15 @@ def _run_query():
                     dp.department,
                     jb.job DESC;
             """
-        )
-        print(df.head(5))
+
+def _run_query():
+    con = wr.mysql.connect(secret_id=secret_name)
+    df = wr.mysql.read_sql_query(sql,con)
     con.close()
+    return df
+
+def _save_data_in_s3(data:pd.DataFrame):
+    wr.s3.to_csv()
 
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event))

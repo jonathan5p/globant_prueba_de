@@ -86,7 +86,8 @@ class GlobantPruebaStack(Stack):
         # Number of employees hired for each job and department in 2021 divided by quarter. The
         # table must be ordered alphabetically by department and job.
 
-        lambda_env_vars = {"secret_name": lambda_config.get("secret_name")}
+        lambda_env_vars = {"secret_name": lambda_config.get("secret_name"),
+                           "bucket_url": storage_bucket.url_for_object()}
 
         first_sql_fun = lambda_.Function(
             self,
@@ -113,8 +114,6 @@ class GlobantPruebaStack(Stack):
         # List of ids, name and number of employees hired of each department that hired more
         # employees than the mean of employees hired in 2021 for all the departments, ordered
         # by the number of employees hired (descending).
-
-        lambda_env_vars = {"secret_name": lambda_config.get("secret_name")}
 
         second_sql_fun = lambda_.Function(
             self,
