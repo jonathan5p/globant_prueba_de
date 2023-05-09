@@ -5,9 +5,11 @@ import awswrangler as wr
 import boto3
 
 secret_name = os.environ["secret_name"]
-bucket_name  = os.environ["bucket_name"]
+bucket_name = os.environ["bucket_name"]
 
-sql =  """
+s3_client = boto3.client("s3")
+
+sql = """
             WITH hired_employees_cte AS ( 
                 SELECT
                     quarter(datetime) AS quart,
@@ -39,21 +41,38 @@ sql =  """
                     jb.job DESC;
             """
 
+
 def _run_query():
     con = wr.mysql.connect(secret_id=secret_name)
-    df = wr.mysql.read_sql_query(sql,con)
+    df = wr.mysql.read_sql_query(sql, con)
     con.close()
     return df
 
-def _save_data_in_s3(data:pd.DataFrame):
-    wr.s3.to_csv()
+
+def _save_data_in_s3(data: pd.DataFrame):
+
+    wr.s3.to_csv(
+        df=data,
+        path=f"s3://{bucket_name}/first_sql_requirement_report.csv",
+        mode="overwrite",
+    )
+
+    url = s3_client.generate_presigned_url(
+        ClientMethod="get_object",
+        Params={"Bucket": bucket_name, "Key": "first_sql_requirement_report.csv"},
+        ExpiresIn=24 * 3600,
+    )
+
+    print("Upload Successful", url)
+    return url
+
 
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
 
-    res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
-
     _run_query()
 
+    res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
     res["body"] = f"First SQL report!"
+    
     return res
