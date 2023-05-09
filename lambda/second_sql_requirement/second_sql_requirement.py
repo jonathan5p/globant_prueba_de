@@ -6,6 +6,7 @@ import boto3
 
 secret_name = os.environ["secret_name"]
 bucket_name = os.environ["bucket_name"]
+presigned_url_expiration_hours = int(os.environ["presigned_url_expiration_hours"])
 
 s3_client = boto3.client("s3")
 
@@ -53,7 +54,7 @@ def _save_data_in_s3(data: pd.DataFrame):
     url = s3_client.generate_presigned_url(
         ClientMethod="get_object",
         Params={"Bucket": bucket_name, "Key": "second_sql_requirement_report.csv"},
-        ExpiresIn=24 * 3600,
+        ExpiresIn = presigned_url_expiration_hours * 3600,
     )
 
     print("Upload Successful", url)

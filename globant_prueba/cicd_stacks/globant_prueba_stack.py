@@ -87,7 +87,8 @@ class GlobantPruebaStack(Stack):
         # table must be ordered alphabetically by department and job.
 
         lambda_env_vars = {"secret_name": lambda_config.get("secret_name"),
-                           "bucket_name": storage_bucket.bucket_name}
+                           "bucket_name": storage_bucket.bucket_name,
+                           "presigned_url_expiration_hours":lambda_config.get("presigned_url_expiration_hours")}
 
         first_sql_fun = lambda_.Function(
             self,

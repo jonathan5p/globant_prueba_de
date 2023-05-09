@@ -16,6 +16,7 @@ Stacks:
       memory_size: 256 #in mb
       timewindow_hours: "6"
       secret_name: globant-prueba-dev-AuroraDBClusterSecret
+      presigned_url_expiration_hours: "24"
   NetworkingStack:
     max_azs: 2
 
