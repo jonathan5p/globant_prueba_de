@@ -39,7 +39,7 @@ sql = """
                 ORDER BY
                     dp.department,
                     jb.job DESC;
-            """
+    """
 
 
 def _run_query():
@@ -71,8 +71,9 @@ def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
 
     _run_query()
+    url = _save_data_in_s3()
 
     res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
-    res["body"] = f"First SQL report!"
-    
+    res["body"] = {"message" : f"First SQL report runned succesfuly!",
+                   "presigned-url": url}
     return res
