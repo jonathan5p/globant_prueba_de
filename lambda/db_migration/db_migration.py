@@ -52,13 +52,13 @@ def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
 
     res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
-    res["body"] = f"Default behavior, nothing was done."
+    res["body"] = f"Data loaded succesfully!"
 
     chk_params = _check_input_parameters(event.get("queryStringParameters"))
 
     if event["headers"].get("Content-Type") == "text/csv" and chk_params == None:
         df = _read_csv(event.get("body"))
-
+        
         if df.shape[0] > 1000:
             res = {
                 "statusCode": 400,
@@ -68,14 +68,13 @@ def lambda_handler(event, context):
         else:
             table = event.get("queryStringParameters").get("table")
             schema = event.get("queryStringParameters").get("schema")
-            append = event.get("queryStringParameters").get("append",False)
+            append = (event.get("queryStringParameters").get("append", False) == "true")
 
             print("Table: ", table)
             print("Schema: ", schema)
+            print("Append: ", append)
 
             _send_data_to_mysql(data_df=df, table=table, schema=schema, append=append)
-            res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
-            res["body"] = f"Data loaded succesfully!"
 
     elif chk_params != None:
         res = chk_params
