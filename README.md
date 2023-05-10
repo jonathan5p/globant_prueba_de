@@ -62,7 +62,7 @@ The endpoint for the first sql requirement is **GET first_sql_requirement** and 
 
 1. All the infrastructure use for this test is hosted in the AWS public cloud and can be modified using IaC and CICD pipelines created by this repo. Another relevant point is that all the main services (the ones use by the API and not just for test purposes) are serverless services, which means that you only pay for what you use. 
 
-2. You can find a simple API test for the db_migration endpoint in the file *tests/api_tests/db_migration_tests.py*. In a production environment this test should be added to the CICD pipeline as a integration test for the application after we deployed.
+2. You can find a simple API test for the db_migration endpoint in the file *tests/api_tests/db_migration_tests.py*. In a production environment this test should be added to the CICD pipeline as a integration test for the application after the API was deployed
 
-3. In this case we don't need to containerize the application, but if it is needed we can use FastAPI, Docker and EC2 or Lambda to host this API in the AWS Cloud.
+3. In this case we don't need to containerize the application since we are deploying all the API infrastructure into serverless AWS services, but if it is needed we can use FastAPI, Docker and EC2 or Lambda to host this API in the AWS Cloud.
 
