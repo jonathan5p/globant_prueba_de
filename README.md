@@ -33,6 +33,36 @@ $ cdk [--role-arn <CDK_ROLE_ARN>] destroy [<STACK_NAME> or --all to destroy all 
 
 # Stacks available
 
-* NetworkingStack
-* RdsStack
-* GlobantPruebaStack
+* **NetworkingStack**: All the necessary resources to test the api deployment in a secure environment.
+* **RdsStack**: Test MySQL database and bastion host.
+* **GlobantPruebaStack**: Main application stack. It contains the API, Lambda functions and S3 buckets necessary for the application to work properly. 
+
+# Sections 
+
+Section by sections solutions explained. 
+
+Before reviewing what has been done in each section, I would like to make a clarification,ue to the amount and volume of the data used in this test, I recommend to use the [aws pandas sdk](https://aws-sdk-pandas.readthedocs.io/en/stable/) that 
+is an AWS Professional Service open source python initiative that extends the power of the pandas library to AWS, connecting DataFrames and AWS data & analytics services.
+
+Built on top of other open-source projects like Pandas, Apache Arrow and Boto3, it offers abstracted functions to execute your usual ETL tasks like load/unloading data from Data Lakes, Data Warehouses and Databases, even at scale.
+
+If the volume of data reaches a point where it cannot be handled by the aws pandas sdk and lambda functions, it is recommended to create a processing pipeline with pyspark on top of AWS Glue. 
+## Section 1
+
+The API receives historical csv files up to 10MB in the **POST db_migration** endpoint. The enpoint needs the parameters table, schema and append to upload the data to the database. 
+
++ The CSV files are store in the local storage of the requester.
++ For the purpose of this test, I used an Aurora MySQL database hosted in the AWS Cloud. 
+
+## Section 2
+
+The endpoint for the first sql requirement is **GET first_sql_requirement** and for the second one is **GET second_sql_requirement**. If everything is processed correctly the API returns a S3 presigned url to download a csv report with the information needed. By default the presigned url expires in 24 hours, but this can be change in the the stacks configuration file.
+
+## Bonus track
+
+1. All the infrastructure use for this test is hosted in the AWS public cloud and can be modified using IaC and CICD pipelines created by this repo. Another relevant point is that all the main services (the ones use by the API and not just for test purposes) are serverless services, which means that you only pay for what you use. 
+
+2. 
+
+3. In this case we don't need to containerize the application, but if it is needed we can use FastAPI, Docker and EC2 or Lambda to host this API in the AWS Cloud.
+

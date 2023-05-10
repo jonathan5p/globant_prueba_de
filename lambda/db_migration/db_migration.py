@@ -7,8 +7,10 @@ import pandas as pd
 secret_name = os.environ["secret_name"]
 
 
-def _check_input_parameters(query_parameters: dict):
+def _check_input_parameters(event: dict):
     res = None
+
+    query_parameters = event.get("queryStringParameters")
 
     if query_parameters == None:
         res = {
@@ -20,6 +22,12 @@ def _check_input_parameters(query_parameters: dict):
         res = {
             "statusCode": 400,
             "body": "Table is a required parameter",
+            "headers": {"Content-Type": "*/*"},
+        }
+    elif event.get("body") == None:
+        res = {
+            "statusCode": 400,
+            "body": "Can not find data to upload",
             "headers": {"Content-Type": "*/*"},
         }
     elif "schema" not in query_parameters.keys():
@@ -54,7 +62,7 @@ def lambda_handler(event, context):
     res = {"statusCode": 200, "headers": {"Content-Type": "*/*"}}
     res["body"] = f"Data loaded succesfully!"
 
-    chk_params = _check_input_parameters(event.get("queryStringParameters"))
+    chk_params = _check_input_parameters(event)
 
     if event["headers"].get("Content-Type") == "text/csv" and chk_params == None:
         df = _read_csv(event.get("body"))

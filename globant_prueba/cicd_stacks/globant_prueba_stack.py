@@ -63,8 +63,8 @@ class GlobantPruebaStack(Stack):
 
         db_migration_fun = lambda_.Function(
             self,
-            self.app_prefix + "api-backend",
-            function_name=self.app_prefix + "api-backend",
+            self.app_prefix + "db-migration",
+            function_name=self.app_prefix + "db-migration",
             runtime=lambda_.Runtime.PYTHON_3_9,
             handler="db_migration.lambda_handler",
             code=lambda_.Code.from_asset("./lambda/db_migration"),
