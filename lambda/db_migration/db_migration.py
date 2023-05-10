@@ -24,16 +24,16 @@ def _check_input_parameters(event: dict):
             "body": "Table is a required parameter",
             "headers": {"Content-Type": "*/*"},
         }
-    elif event.get("body") == None:
-        res = {
-            "statusCode": 400,
-            "body": "Can not find data to upload",
-            "headers": {"Content-Type": "*/*"},
-        }
     elif "schema" not in query_parameters.keys():
         res = {
             "statusCode": 400,
             "body": "Schema is a required parameter",
+            "headers": {"Content-Type": "*/*"},
+        }
+    elif event.get("body") == None:
+        res = {
+            "statusCode": 400,
+            "body": "Cannot find data to upload",
             "headers": {"Content-Type": "*/*"},
         }
 
@@ -46,7 +46,9 @@ def _read_csv(payload_body: str):
     return df
 
 
-def _send_data_to_mysql(data_df: pd.DataFrame, table: str, schema: str, append:bool=False):
+def _send_data_to_mysql(
+    data_df: pd.DataFrame, table: str, schema: str, append: bool = False
+):
     con = wr.mysql.connect(secret_id=secret_name)
     tables = wr.mysql.read_sql_query(sql="show tables;", con=con)
     if table in tables.iloc[:, 0].to_list() and not append:
@@ -66,7 +68,7 @@ def lambda_handler(event, context):
 
     if event["headers"].get("Content-Type") == "text/csv" and chk_params == None:
         df = _read_csv(event.get("body"))
-        
+
         if df.shape[0] > 1000:
             res = {
                 "statusCode": 400,
@@ -76,7 +78,7 @@ def lambda_handler(event, context):
         else:
             table = event.get("queryStringParameters").get("table")
             schema = event.get("queryStringParameters").get("schema")
-            append = (event.get("queryStringParameters").get("append", False) == "true")
+            append = event.get("queryStringParameters").get("append", False) == "true"
 
             print("Table: ", table)
             print("Schema: ", schema)
