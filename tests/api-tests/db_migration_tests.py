@@ -19,19 +19,28 @@ endpoints = [
         "name": "db_migration check schema",
         "url": "/db_migration",
         "method": "POST",
+        "expected_msg":"Table and schema are required parameters"
+    },
+    {
+        "name": "db_migration check schema",
+        "url": "/db_migration",
+        "method": "POST",
         "params": {"table": "departments"},
+        "expected_msg":"Schema is a required parameter"
     },
     {
         "name": "db_migration check table",
         "url": "/db_migration",
         "method": "POST",
         "params": {"schema": "test_db"},
+        "expected_msg":"Table is a required parameter"
     },
     {
         "name": "db_migration check data",
         "url": "/db_migration",
         "method": "POST",
-        "params": {"table": "departments","schema":"test_db"}
+        "params": {"table": "departments","schema":"test_db"},
+        "expected_msg":"Cannot find data to upload"
     },
     {
         "name": "db_migration check data",
@@ -39,6 +48,7 @@ endpoints = [
         "method": "POST",
         "params": {"table": "departments","schema":"test_db"},
         "data": "../test-files/departamentos.csv",
+        "expected_msg":"Data loaded succesfully!"
     },
 ]
 
@@ -65,8 +75,8 @@ for endpoint in endpoints:
                     params=endpoint.get("params", {})
                 )
     
-        # Check the status code of the API response
-        if response.status_code == 200:
+        # Check test completion
+        if response.text == endpoint.get("expected_msg",""):
             print(f"{endpoint['name']} - PASSED")
             print("Reason: ", response.text)
         else:
