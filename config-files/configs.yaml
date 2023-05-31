@@ -7,7 +7,7 @@ Environment:
   Name: dev
   Account: "374334889508"
   Region: us-east-1
-  ProjectName: globant-prueba
+  ProjectName: globant-prueba-rds
 Stacks:
   GlobantPruebaStack: 
     Lambda:
